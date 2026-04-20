@@ -27,7 +27,7 @@ function Hero() {
           <div
             style={{
               height: "40vh", // 🔥 ارتفاع مناسب
-              backgroundImage:`url(${shop})`,
+              backgroundImage: `url(${shop})`,
               backgroundSize: "contain", // يغطي المساحة
               backgroundPosition: "center", // تمركز الصورة
               position: "relative", // مهم للـ overlay
@@ -87,7 +87,7 @@ function Hero() {
           <div
             style={{
               height: "40vh",
-              backgroundImage:` url(${elec})`,
+              backgroundImage: `url(${elec})`,
               backgroundSize: "contain",
               backgroundPosition: "center",
               position: "relative",
