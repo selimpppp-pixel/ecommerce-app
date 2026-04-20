@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
 import Products from "./pages/Products.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Hero from "./components/Hero.jsx";
@@ -16,7 +17,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Login />} />
-
+        <Route path="/register" element={<Register />} />
         <Route
           path="/products"
           element={

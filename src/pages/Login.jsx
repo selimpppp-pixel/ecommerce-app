@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // 🔥 ضفنا Link
 
 // 🔥 Firebase
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -8,7 +8,7 @@ import { auth } from "../firebase";
 function Login() {
   const navigate = useNavigate();
 
-  // 🧠 state (بدل username → email)
+  // 🧠 state لتخزين الإيميل والباسورد
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -24,14 +24,15 @@ function Login() {
 
       console.log("FIREBASE USER:", userCredential.user);
 
-      // 🟢 نحفظ token بسيط (عشان ProtectedRoute يشتغل)
+      // 🟢 نخزن token عشان ProtectedRoute يشتغل
       localStorage.setItem("token", userCredential.user.uid);
 
-      // 🔁 نروح للمنتجات
+      // 🔁 نروح لصفحة المنتجات
       navigate("/products");
     } catch (error) {
       console.log("FIREBASE LOGIN ERROR:", error.message);
 
+      // ❌ لو البيانات غلط
       alert("Email or Password wrong ❌");
     }
   };
@@ -53,9 +54,9 @@ function Login() {
           background: "#fff",
         }}
       >
-        <h2 style={{ textAlign: "center" }}>Login </h2>
+        <h2 style={{ textAlign: "center" }}>Login</h2>
 
-        {/* 📧 Email (بدل Username) */}
+        {/* 📧 Email */}
         <input
           type="email"
           placeholder="Email"
@@ -85,7 +86,7 @@ function Login() {
           }}
         />
 
-        {/* 🔘 Button */}
+        {/* 🔘 Login Button */}
         <button
           onClick={handleLogin}
           style={{
@@ -101,6 +102,14 @@ function Login() {
         >
           Login
         </button>
+
+        {/* 👇 🔥 هنا حطينا لينك التسجيل */}
+        <p style={{ marginTop: "10px", textAlign: "center" }}>
+          Don't have an account?{" "}
+          <Link to="/register" style={{ color: "#ff9900", fontWeight: "bold" }}>
+            Register
+          </Link>
+        </p>
       </div>
     </div>
   );
