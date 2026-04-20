@@ -5,7 +5,7 @@ import "swiper/css";
 
 // 🖼️ صور من فولدر assets
 import shop from "../assets/shop.jpg";
-import clothes from "../assets/clothes.jpg";
+import clothes from "../assets/Clothes.jpg";
 import elec from "../assets/elec.jpg";
 
 function Hero() {
