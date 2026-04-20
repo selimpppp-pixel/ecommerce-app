@@ -90,11 +90,11 @@ function Navbar() {
           onChange={(e) => dispatch(setSearch(e.target.value))}
           style={{
             width: "100%",
-            maxWidth: "300px",
-            padding: "8px",
+            padding: "10px",
             borderRadius: "5px",
             border: "none",
             outline: "none",
+            fontSize: "16px"
           }}
         />
       </div>
