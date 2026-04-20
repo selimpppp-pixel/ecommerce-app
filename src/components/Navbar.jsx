@@ -83,7 +83,7 @@ function Navbar() {
       </div>
 
       {/* 🟡 SEARCH */}
-      <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
+      <div style={{ flex: "1  1  100%", display: "flex", justifyContent: "center" }}>
         <input
           type="text"
           placeholder="Search products..."
