@@ -8,6 +8,7 @@ import ProductDetails from "./pages/ProductDetails.jsx";
 import Cart from "./pages/Cart.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Success from "./pages/Success.jsx";
+import Footer from "./components/Footer.jsx";
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
           path="/success" element={<Success />} />
         
       </Routes>
+      <Footer/>
     </BrowserRouter>
   );
 }
