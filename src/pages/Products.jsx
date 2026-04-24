@@ -8,60 +8,60 @@ function Products() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // state لتخزين المنتجات
   const [products, setProducts] = useState([]);
 
-  // 🟢 الكاتيجوري
+  // state لتخزين الكاتيجوري
   const [categories, setCategories] = useState([]);
 
-  // 🟢 الكاتيجوري المختارة
+  // الكاتيجوري المختارة
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // 🟢 Dropdown
+  // اظهار او اخفاء dropdown
   const [showCategories, setShowCategories] = useState(false);
 
-  // 🟢 🆕 Pagination
+  // pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
+  // قيمة البحث من redux
   const search = useSelector((state) => state.search.query);
 
-  // 📦 جلب المنتجات
+  // جلب المنتجات من API
   useEffect(() => {
     const getProducts = async () => {
       const res = await API.get("/products");
       setProducts(res.data.products || res.data);
     };
-
     getProducts();
   }, []);
 
-  // 📂 جلب الكاتيجوري
+  // جلب الكاتيجوري
   useEffect(() => {
     const getCategories = async () => {
       const res = await API.get("/products/categories");
       setCategories(res.data);
     };
-
     getCategories();
   }, []);
 
-  // 🎯 اختيار كاتيجوري
+  // اختيار كاتيجوري
   const handleCategoryClick = async (cat) => {
     setSelectedCategory(cat);
 
     const res = await API.get(`/products/category/${cat}`);
-    setProducts(res.data.products || res .data || [] );
+    setProducts(res.data.products || res.data || []);
 
     setShowCategories(false);
-    setCurrentPage(1); // 🔥 يرجع لأول صفحة
+    setCurrentPage(1);
   };
 
-  // 🔍 فلترة السيرش
+  // فلترة المنتجات حسب البحث
   const filteredProducts = products.filter((product) =>
     product.title.toLowerCase().includes((search || "").toLowerCase())
   );
 
-  // 🟢 🆕 حساب المنتجات في الصفحة
+  // حساب pagination
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
 
@@ -74,7 +74,7 @@ function Products() {
     <div style={{ marginTop: "70px", padding: "20px" }}>
       <h2>Products</h2>
 
-      {/* 🔽 Dropdown Categories */}
+      {/* زرار الكاتيجوري */}
       <div style={{ marginBottom: "20px", position: "relative" }}>
         <button
           onClick={() => setShowCategories(!showCategories)}
@@ -88,9 +88,10 @@ function Products() {
             fontWeight: "bold",
           }}
         >
-          Browse Categories 
+          Browse Categories
         </button>
 
+        {/* قائمة الكاتيجوري */}
         {showCategories && (
           <div
             style={{
@@ -112,10 +113,13 @@ function Products() {
                 style={{
                   padding: "10px",
                   cursor: "pointer",
-                  borderBottom: "1px solid #f1f1f1",
                 }}
-                onMouseEnter={(e) => (e.target.style.background = "#f5f5f5")}
-                onMouseLeave={(e) => (e.target.style.background = "#fff")}
+                onMouseEnter={(e) =>
+                  (e.target.style.background = "#f5f5f5")
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.background = "#fff")
+                }
               >
                 {cat}
               </div>
@@ -124,73 +128,116 @@ function Products() {
         )}
       </div>
 
-      {/* 📦 المنتجات */}
+      {/* عرض المنتجات */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
           gap: "20px",
         }}
       >
-        {/* 🔥 استخدمنا currentProducts بدل filteredProducts */}
         {currentProducts.map((product) => (
           <div
             key={product.id || product._id}
             style={{
               border: "1px solid #eee",
-              borderRadius: "10px",
+              borderRadius: "12px",
               padding: "15px",
               background: "#fff",
               display: "flex",
               flexDirection: "column",
               height: "100%",
+              transition: "0.3s", // للأنيميشن
+            }}
+            // انيميشن عند الوقوف بالماوس
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.03)";
+              e.currentTarget.style.boxShadow =
+                "0 10px 25px rgba(0,0,0,0.2)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.boxShadow = "none";
             }}
           >
+            {/* صورة المنتج */}
             <img
               src={product.image}
-              onClick={() => navigate(`/products/${product.id || product._id}`)}
+              onClick={() =>
+                navigate(`/products/${product.id || product._id}`)
+              }
               style={{
                 width: "100%",
                 height: "150px",
                 objectFit: "cover",
+                borderRadius: "8px",
                 cursor: "pointer",
               }}
             />
 
+            {/* اسم المنتج */}
             <h4
-              onClick={() => navigate(`/products/${product.id || product._id}`)}
-              style={{ cursor: "pointer" }}
+              onClick={() =>
+                navigate(`/products/${product.id || product._id}`)
+              }
+              style={{ cursor: "pointer", margin: "10px 0" }}
             >
               {product.title}
             </h4>
 
-            <p style={{ color: "green" }}>{product.price} $</p>
+            {/* السعر */}
+            <p style={{ color: "green", fontWeight: "bold" }}>
+              {product.price} $
+            </p>
 
-            <button
-              onClick={() => {
-                dispatch(
-                  addToCart({
-                    ...product,
-                    id: product.id || product._id,
-                  })
-                );
-              }}
-              style={{
-                marginTop: "auto",
-                padding: "8px",
-                background: "#ff9900",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
-            >
-              Add to Cart 🛒
-            </button>
+            {/* الأزرار */}
+            <div style={{ marginTop: "auto", display: "flex", gap: "8px" }}>
+              
+              {/* زرار إضافة للكارت */}
+              <button
+                onClick={() => {
+                  dispatch(
+                    addToCart({
+                      ...product,
+                      id: product.id || product._id,
+                    })
+                  );
+                }}
+                style={{
+                  flex: 1,
+                  padding: "8px",
+                  background: "#ff9900",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                }}
+              >
+                Add
+              </button>
+
+              {/* زرار تفاصيل المنتج */}
+              <button
+                onClick={() =>
+                  navigate(`/products/${product.id || product._id}`)
+                }
+                style={{
+                  flex: 1,
+                  padding: "8px",
+                  background: "#333",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                }}
+              >
+                View
+              </button>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* 🔢 Pagination Buttons */}
+      {/* أزرار الصفحات */}
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         {[...Array(Math.ceil(filteredProducts.length / itemsPerPage))].map(
           (_, i) => (

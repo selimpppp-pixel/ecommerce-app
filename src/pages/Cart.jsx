@@ -7,6 +7,7 @@ import {
 } from "../redux/slices/cartSlice";
 
 import { useNavigate } from "react-router-dom"; // 🔥 جديد
+import { FaShoppingCart } from "react-icons/fa";
 
 function Cart() {
   const dispatch = useDispatch();
@@ -22,7 +23,10 @@ function Cart() {
 
   return (
     <div style={{ marginTop: "70px", padding: "20px" }}>
-      <h2>My Cart 🛒</h2>
+      <h2 style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+  My Cart
+<FaShoppingCart size={20} color="#ff9900" />
+</h2>
 
       {cart.length === 0 ? (
         <p>Cart is empty</p>
