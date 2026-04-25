@@ -7,6 +7,7 @@ import API from "../services/api";
 // Redux
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
+import Swal from "sweetalert2";
 
 function ProductDetails() {
 
@@ -99,15 +100,23 @@ function ProductDetails() {
         {/* زرار إضافة للكارت */}
         <button
           onClick={() => {
-            dispatch(
-              addToCart({
-                ...product,
+  dispatch(
+    addToCart({
+      ...product,
+      id: product.id || product._id,
+    })
+  );
 
-                // بنحدد id عشان بعض APIs بتستخدم _id
-                id: product.id || product._id,
-              })
-            );
-          }}
+  //  Sweet Alert
+  Swal.fire({
+    title: "Added to cart 🛒",
+    text: `${product.title}`,
+    icon: "success",
+    confirmButtonText: "OK",
+    timer: 1500,
+    showConfirmButton: false,
+  });
+}}
           style={{
             marginTop: "20px",
             padding: "10px 20px",

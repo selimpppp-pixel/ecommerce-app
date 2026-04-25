@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
 
+// 🔥 استدعاء SweetAlert
+import Swal from "sweetalert2";
+
 function Products() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -61,7 +64,7 @@ function Products() {
     product.title.toLowerCase().includes((search || "").toLowerCase())
   );
 
-  // حساب pagination
+  // pagination
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
 
@@ -110,10 +113,7 @@ function Products() {
               <div
                 key={cat}
                 onClick={() => handleCategoryClick(cat)}
-                style={{
-                  padding: "10px",
-                  cursor: "pointer",
-                }}
+                style={{ padding: "10px", cursor: "pointer" }}
                 onMouseEnter={(e) =>
                   (e.target.style.background = "#f5f5f5")
                 }
@@ -147,9 +147,8 @@ function Products() {
               display: "flex",
               flexDirection: "column",
               height: "100%",
-              transition: "0.3s", // للأنيميشن
+              transition: "0.3s",
             }}
-            // انيميشن عند الوقوف بالماوس
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "scale(1.03)";
               e.currentTarget.style.boxShadow =
@@ -193,15 +192,25 @@ function Products() {
             {/* الأزرار */}
             <div style={{ marginTop: "auto", display: "flex", gap: "8px" }}>
               
-              {/* زرار إضافة للكارت */}
+              {/* 🛒 زرار إضافة للكارت */}
               <button
                 onClick={() => {
+                  // إضافة للكارت
                   dispatch(
                     addToCart({
                       ...product,
                       id: product.id || product._id,
                     })
                   );
+
+                  // 🔥 Sweet Alert
+                  Swal.fire({
+                    title: "Added to cart 🛒",
+                    text: `${product.title}`,
+                    icon: "success",
+                    timer: 1200,
+                    showConfirmButton: false,
+                  });
                 }}
                 style={{
                   flex: 1,
@@ -215,7 +224,7 @@ function Products() {
                 Add
               </button>
 
-              {/* زرار تفاصيل المنتج */}
+              {/* زرار تفاصيل */}
               <button
                 onClick={() =>
                   navigate(`/products/${product.id || product._id}`)
@@ -237,7 +246,7 @@ function Products() {
         ))}
       </div>
 
-      {/* أزرار الصفحات */}
+      {/* pagination */}
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         {[...Array(Math.ceil(filteredProducts.length / itemsPerPage))].map(
           (_, i) => (
