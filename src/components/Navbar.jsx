@@ -123,9 +123,15 @@ function Navbar() {
           </span>
         )}
 
-        <Link to="/products" style={linkStyle}>
-          Products
-        </Link>
+        <Link
+  to="/products"
+  style={{
+    ...linkStyle,
+    marginRight: isMobile ? "6px" : "12px", // 👈 مسافة بسيطة عن السيرش
+  }}
+>
+  Products
+</Link>
       </div>
 
       {/* RIGHT */}
@@ -205,7 +211,7 @@ function Navbar() {
               cursor: "pointer",
               fontWeight: "bold",
               fontSize: isMobile ? "10px" : "14px",
-              marginRight: "6px", // 👈 حل المشكلة
+              marginRight: "6px", //  حل المشكلة
             }}
           >
             Logout
