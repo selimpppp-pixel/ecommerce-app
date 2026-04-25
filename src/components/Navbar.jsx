@@ -11,16 +11,12 @@ function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // المنتجات في الكارت
   const cartItems = useSelector((state) => state.cart.items);
 
-  // بيانات اليوزر
   const [user, setUser] = useState(null);
 
-  // responsive
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // متابعة تسجيل الدخول
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -28,7 +24,6 @@ function Navbar() {
     return () => unsubscribe();
   }, []);
 
-  // متابعة حجم الشاشة
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -38,19 +33,16 @@ function Navbar() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // حساب عدد المنتجات في الكارت
   const totalCount = cartItems.reduce(
     (sum, item) => sum + item.quantity,
     0
   );
 
-  // تسجيل الخروج
   const handleLogout = async () => {
     await signOut(auth);
     navigate("/");
   };
 
-  // ستايل اللينكات
   const linkStyle = {
     color: "#fff",
     textDecoration: "none",
@@ -70,15 +62,14 @@ function Navbar() {
         position: "fixed",
         top: 0,
         left: 0,
-        right: 0, // 👈 حل المشكلة
+        right: 0,
         width: "100%",
-      
-        padding: isMobile ? "0 10px" : "0 25px",
+        padding: isMobile ? "0 15px" : "0 25px", // 👈 زودنا padding
         zIndex: 1000,
         boxSizing: "border-box",
       }}
     >
-      {/* 🔵 LEFT (اللوجو) */}
+      {/* LEFT */}
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
         <div
           style={{
@@ -100,12 +91,12 @@ function Navbar() {
         </h2>
       </div>
 
-      {/* 🟡 CENTER (اللينكات) */}
+      {/* CENTER */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          gap: isMobile ? "10px" : "25px",
+          gap: isMobile ? "8px" : "25px",
         }}
       >
         {!user ? (
@@ -118,45 +109,45 @@ function Navbar() {
               ...linkStyle,
               background: "#ff9900",
               color: "#000",
-              padding: "4px 8px",
+              padding: "3px 6px",
               borderRadius: "5px",
-              fontSize: isMobile ? "12px" : "14px",
+              fontSize: isMobile ? "11px" : "14px",
+              maxWidth: "90px",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
             }}
           >
+            {/* 👇 قص الإيميل */}
             {user.displayName || user.email}
           </span>
         )}
-<Link
-  to="/products"
-  style={{
-    ...linkStyle,
-    marginRight: isMobile ? "5px" : "15px", // 👈 الحل
-  }}
->
-  Products
-</Link>
+
+        <Link to="/products" style={linkStyle}>
+          Products
+        </Link>
       </div>
 
-      {/* 🔴 RIGHT (search + cart + logout) */}
+      {/* RIGHT */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
-       gap: isMobile ? "8px" : "15px",
+          gap: isMobile ? "6px" : "15px",
         }}
       >
-        {/* البحث */}
+        {/* SEARCH */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             background: "#fff",
             borderRadius: "6px",
-            padding: "4px 8px",
-            width: isMobile ? "120px" : "180px",
+            padding: "3px 6px",
+            width: isMobile ? "90px" : "180px", // 👈 أصغر
           }}
         >
-          <FaSearch size={14} color="#333" style={{ marginRight: "4px" }} />
+          <FaSearch size={12} color="#333" style={{ marginRight: "4px" }} />
 
           <input
             type="text"
@@ -166,72 +157,60 @@ function Navbar() {
               border: "none",
               outline: "none",
               width: "100%",
-              fontSize: "12px",
+              fontSize: "11px",
             }}
           />
         </div>
 
-        {/* الكارت */}
+        {/* CART */}
         <Link
           to="/cart"
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            width: isMobile ? "28px" : "32px",
-            height: isMobile ? "28px" : "32px",
-            borderRadius: "8px",
+            width: "28px",
+            height: "28px",
             position: "relative",
-            flexShrink: 0,
           }}
         >
-          <FaShoppingCart size={16} color="#fff" />
+          <FaShoppingCart size={14} color="#fff" />
 
           <span
             style={{
               position: "absolute",
-              top: "-5px",
-              right: "-5px",
+              top: "-4px",
+              right: "-4px",
               background: "red",
               color: "#fff",
               borderRadius: "50%",
-              fontSize: "10px",
-              padding: "2px 5px",
+              fontSize: "9px",
+              padding: "2px 4px",
             }}
           >
             {totalCount}
           </span>
         </Link>
 
-        {/* logout */}
+        {/* LOGOUT */}
         {user && (
-  <button
-    onClick={handleLogout}
-    style={{
-      background: "red",
-      color: "#fff",
-      border: "none",
-
-      // 👇 صغرنا الحجم
-      padding: isMobile ? "2px 6px" : "4px 10px",
-
-      borderRadius: "5px",
-      cursor: "pointer",
-      fontWeight: "bold",
-
-      // 👇 أهم حاجة عشان ميتلزقش في الحافة
-      marginRight: "5px",
-
-      // 👇 حجم الخط أصغر
-      fontSize: isMobile ? "10px" : "13px",
-
-      // 👇 عرض ثابت صغير يخليه يبان
-      minWidth: isMobile ? "50px" : "65px",
-    }}
-  >
-    Logout
-  </button>
-)}
+          <button
+            onClick={handleLogout}
+            style={{
+              background: "red",
+              color: "#fff",
+              border: "none",
+              padding: isMobile ? "2px 6px" : "5px 12px",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: isMobile ? "10px" : "14px",
+              marginRight: "6px", // 👈 حل المشكلة
+            }}
+          >
+            Logout
+          </button>
+        )}
       </div>
     </div>
   );
