@@ -1,38 +1,29 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom"; // 🔥 ضفنا Link
+import { useNavigate, Link } from "react-router-dom";
 
-// 🔥 Firebase
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 
+import { useTheme } from "../context/ThemeContext"; // 👈 مهم
+
 function Login() {
   const navigate = useNavigate();
+  const { darkMode } = useTheme(); // 👈 مهم
 
-  // 🧠 state لتخزين الإيميل والباسورد
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // 🚀 Login باستخدام Firebase
   const handleLogin = async () => {
     try {
-      // 🔥 تسجيل الدخول من Firebase
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
 
-      console.log("FIREBASE USER:", userCredential.user);
-
-      // 🟢 نخزن token عشان ProtectedRoute يشتغل
       localStorage.setItem("token", userCredential.user.uid);
-
-      // 🔁 نروح لصفحة المنتجات
       navigate("/products");
     } catch (error) {
-      console.log("FIREBASE LOGIN ERROR:", error.message);
-
-      // ❌ لو البيانات غلط
       alert("Email or Password wrong ❌");
     }
   };
@@ -49,14 +40,15 @@ function Login() {
         style={{
           width: "300px",
           padding: "20px",
-          border: "1px solid #eee",
           borderRadius: "10px",
-          background: "#fff",
+          background: darkMode ? "#222" : "#fff",
+          color: darkMode ? "#fff" : "#000",
+          boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
         }}
       >
         <h2 style={{ textAlign: "center" }}>Login</h2>
 
-        {/* 📧 Email */}
+        {/* Email */}
         <input
           type="email"
           placeholder="Email"
@@ -68,10 +60,12 @@ function Login() {
             padding: "8px",
             borderRadius: "5px",
             border: "1px solid #ccc",
+            background: darkMode ? "#333" : "#fff",
+            color: darkMode ? "#fff" : "#000",
           }}
         />
 
-        {/* 🔒 Password */}
+        {/* Password */}
         <input
           type="password"
           placeholder="Password"
@@ -83,10 +77,12 @@ function Login() {
             padding: "8px",
             borderRadius: "5px",
             border: "1px solid #ccc",
+            background: darkMode ? "#333" : "#fff",
+            color: darkMode ? "#fff" : "#000",
           }}
         />
 
-        {/* 🔘 Login Button */}
+        {/* Button */}
         <button
           onClick={handleLogin}
           style={{
@@ -103,7 +99,7 @@ function Login() {
           Login
         </button>
 
-        {/* 👇 🔥 هنا حطينا لينك التسجيل */}
+        {/* Register */}
         <p style={{ marginTop: "10px", textAlign: "center" }}>
           Don't have an account?{" "}
           <Link to="/register" style={{ color: "#ff9900", fontWeight: "bold" }}>

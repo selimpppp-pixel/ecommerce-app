@@ -3,34 +3,31 @@ import API from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
-
-// 🔥 استدعاء SweetAlert
+import { toggleFavorite } from "../redux/slices/favoritesSlice";
+import { useTheme } from "../context/ThemeContext";
 import Swal from "sweetalert2";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 function Products() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // state لتخزين المنتجات
   const [products, setProducts] = useState([]);
-
-  // state لتخزين الكاتيجوري
   const [categories, setCategories] = useState([]);
 
-  // الكاتيجوري المختارة
   const [selectedCategory, setSelectedCategory] = useState(null);
-
-  // اظهار او اخفاء dropdown
   const [showCategories, setShowCategories] = useState(false);
 
-  // pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // قيمة البحث من redux
   const search = useSelector((state) => state.search.query);
+  const favorites = useSelector((state) => state.favorites.items);
 
-  // جلب المنتجات من API
+  //  DARK MODE
+  const {darkMode} = useTheme();
+
+  // 🔄 المنتجات
   useEffect(() => {
     const getProducts = async () => {
       const res = await API.get("/products");
@@ -39,7 +36,7 @@ function Products() {
     getProducts();
   }, []);
 
-  // جلب الكاتيجوري
+  // 🔄 الكاتيجوري
   useEffect(() => {
     const getCategories = async () => {
       const res = await API.get("/products/categories");
@@ -48,7 +45,7 @@ function Products() {
     getCategories();
   }, []);
 
-  // اختيار كاتيجوري
+  // 🎯 اختيار كاتيجوري
   const handleCategoryClick = async (cat) => {
     setSelectedCategory(cat);
 
@@ -59,12 +56,11 @@ function Products() {
     setCurrentPage(1);
   };
 
-  // فلترة المنتجات حسب البحث
+  // 🔍 فلترة
   const filteredProducts = products.filter((product) =>
     product.title.toLowerCase().includes((search || "").toLowerCase())
   );
 
-  // pagination
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
 
@@ -74,10 +70,18 @@ function Products() {
   );
 
   return (
-    <div style={{ marginTop: "70px", padding: "20px" }}>
-      <h2>Products</h2>
+    <div
+      style={{
+        marginTop: "70px",
+        padding: "20px",
+        background: darkMode ? "#111" : "#f5f5f5",
+        minHeight: "100vh",
+        color: darkMode ? "#fff" : "#000",
+      }}
+    >
+      <h2 style={{ color: darkMode ? "#fff" : "#000" }}>Products</h2>
 
-      {/* زرار الكاتيجوري */}
+      {/* Categories */}
       <div style={{ marginBottom: "20px", position: "relative" }}>
         <button
           onClick={() => setShowCategories(!showCategories)}
@@ -94,41 +98,61 @@ function Products() {
           Browse Categories
         </button>
 
-        {/* قائمة الكاتيجوري */}
         {showCategories && (
-          <div
-            style={{
-              position: "absolute",
-              top: "45px",
-              left: 0,
-              background: "#fff",
-              border: "1px solid #eee",
-              borderRadius: "8px",
-              width: "200px",
-              boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
-              zIndex: 100,
-            }}
-          >
-            {categories.map((cat) => (
-              <div
-                key={cat}
-                onClick={() => handleCategoryClick(cat)}
-                style={{ padding: "10px", cursor: "pointer" }}
-                onMouseEnter={(e) =>
-                  (e.target.style.background = "#f5f5f5")
-                }
-                onMouseLeave={(e) =>
-                  (e.target.style.background = "#fff")
-                }
-              >
-                {cat}
-              </div>
-            ))}
-          </div>
+          <>
+            {/* overlay */}
+            <div
+              onClick={() => setShowCategories(false)}
+              style={{
+                position: "fixed",
+                inset: 0,
+                background: "rgba(0,0,0,0.4)",
+                zIndex: 999,
+              }}
+            />
+
+            {/* sidebar */}
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "250px",
+                height: "100%",
+                background: darkMode ? "#222" : "#fff",
+                color: darkMode ? "#fff" : "#000",
+                padding: "20px",
+                zIndex: 1000,
+                boxShadow: "2px 0 10px rgba(0,0,0,0.2)",
+              }}
+            >
+              <h3>Categories</h3>
+
+              {categories.map((cat) => (
+                <div
+                  key={cat}
+                  onClick={() => handleCategoryClick(cat)}
+                  style={{
+                    padding: "10px",
+                    cursor: "pointer",
+                    borderRadius: "6px",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.target.style.background = darkMode ? "#333" : "#f5f5f5")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.target.style.background = "transparent")
+                  }
+                >
+                  {cat}
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
-      {/* عرض المنتجات */}
+      {/* المنتجات */}
       <div
         style={{
           display: "grid",
@@ -136,136 +160,141 @@ function Products() {
           gap: "20px",
         }}
       >
-        {currentProducts.map((product) => (
-          <div
-            key={product.id || product._id}
-            style={{
-              border: "1px solid #eee",
-              borderRadius: "12px",
-              padding: "15px",
-              background: "#fff",
-              display: "flex",
-              flexDirection: "column",
-              height: "100%",
-              transition: "0.3s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "scale(1.03)";
-              e.currentTarget.style.boxShadow =
-                "0 10px 25px rgba(0,0,0,0.2)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-          >
-            {/* صورة المنتج */}
-            <img
-              src={product.image}
-              onClick={() =>
-                navigate(`/products/${product.id || product._id}`)
-              }
+        {currentProducts.map((product) => {
+          const productId = product.id || product._id;
+          const isFav = favorites.find((p) => p.id === productId);
+
+          return (
+            <div
+              key={productId}
               style={{
-                width: "100%",
-                height: "150px",
-                objectFit: "cover",
-                borderRadius: "8px",
+                borderRadius: "12px",
+                padding: "15px",
+                background: darkMode ? "#1e1e1e" : "#fff",
+                border: darkMode ? "1px solid #333" : "1px solid #eee",
+                color: darkMode ? "#fff" : "#000",
+                display: "flex",
+                flexDirection: "column",
+                transition: "0.3s",
                 cursor: "pointer",
               }}
-            />
-
-            {/* اسم المنتج */}
-            <h4
-              onClick={() =>
-                navigate(`/products/${product.id || product._id}`)
-              }
-              style={{ cursor: "pointer", margin: "10px 0" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-6px)";
+                e.currentTarget.style.boxShadow =
+                  "0 12px 20px rgba(0,0,0,0.15)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
-              {product.title}
-            </h4>
+              {/* ❤️ صورة + قلب */}
+              <div style={{ position: "relative", overflow: "hidden" }}>
+                <div
+                  onClick={() =>
+                    dispatch(
+                      toggleFavorite({
+                        ...product,
+                        id: productId,
+                      })
+                    )
+                  }
+                  style={{
+                    position: "absolute",
+                    top: "10px",
+                    right: "10px",
+                    cursor: "pointer",
+                    zIndex: 2,
+                    background: darkMode ? "#333" : "#fff",
+                    borderRadius: "50%",
+                    padding: "5px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                  }}
+                >
+                  {isFav ? (
+                    <FaHeart size={16} color="red" />
+                  ) : (
+                    <FaRegHeart size={16} color="#999" />
+                  )}
+                </div>
 
-            {/* السعر */}
-            <p style={{ color: "green", fontWeight: "bold" }}>
-              {product.price} $
-            </p>
+                <img
+                  src={product.image}
+                  onClick={(e) => {
+                    e.currentTarget.style.transform = "scale(1.15)";
+                    setTimeout(() => {
+                      navigate(`/products/${productId}`);
+                    }, 200);
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "scale(1.05)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "scale(1)";
+                  }}
+                  style={{
+                    width: "100%",
+                    height: "150px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    transition: "0.3s",
+                  }}
+                />
+              </div>
 
-            {/* الأزرار */}
-            <div style={{ marginTop: "auto", display: "flex", gap: "8px" }}>
-              
-              {/* 🛒 زرار إضافة للكارت */}
-              <button
-                onClick={() => {
-                  // إضافة للكارت
-                  dispatch(
-                    addToCart({
-                      ...product,
-                      id: product.id || product._id,
-                    })
-                  );
+              <h4>{product.title}</h4>
+              <p style={{ color: "#4caf50" }}>{product.price} $</p>
 
-                  // 🔥 Sweet Alert
-                  Swal.fire({
-                    title: "Added to cart 🛒",
-                    text: `${product.title}`,
-                    icon: "success",
-                    timer: 1200,
-                    showConfirmButton: false,
-                  });
-                }}
-                style={{
-                  flex: 1,
-                  padding: "8px",
-                  background: "#ff9900",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                }}
-              >
-                Add
-              </button>
+              {/* أزرار */}
+              <div style={{ marginTop: "auto", display: "flex", gap: "8px" }}>
+                <button
+                  onClick={() => {
+                    dispatch(
+                      addToCart({
+                        ...product,
+                        id: productId,
+                      })
+                    );
 
-              {/* زرار تفاصيل */}
-              <button
-                onClick={() =>
-                  navigate(`/products/${product.id || product._id}`)
-                }
-                style={{
-                  flex: 1,
-                  padding: "8px",
-                  background: "#333",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                }}
-              >
-                View
-              </button>
+                    Swal.fire({
+                      title: "Added to cart 🛒",
+                      text: product.title,
+                      icon: "success",
+                      timer: 1200,
+                      showConfirmButton: false,
+                    });
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: "8px",
+                    background: darkMode ? "#ff8800" : "#ff9900",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    color: "#fff",
+                  }}
+                >
+                  Add
+                </button>
+
+                <button
+                  onClick={() => navigate(`/products/${productId}`)}
+                  style={{
+                    flex: 1,
+                    padding: "8px",
+                    background: darkMode ? "#555" : "#333",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                  }}
+                >
+                  View
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* pagination */}
-      <div style={{ marginTop: "20px", textAlign: "center" }}>
-        {[...Array(Math.ceil(filteredProducts.length / itemsPerPage))].map(
-          (_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentPage(i + 1)}
-              style={{
-                margin: "5px",
-                padding: "6px 12px",
-                background: currentPage === i + 1 ? "orange" : "#eee",
-                border: "none",
-                cursor: "pointer",
-                borderRadius: "5px",
-              }}
-            >
-              {i + 1}
-            </button>
-          )
-        )}
+          );
+        })}
       </div>
     </div>
   );
