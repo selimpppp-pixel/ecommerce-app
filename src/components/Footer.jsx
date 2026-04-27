@@ -5,7 +5,7 @@ function Footer() {
   const linkStyle = {
     color: "#fff",
     textDecoration: "none",
-    fontSize: "14px",
+    fontSize: "auto",
   };
 
   return (

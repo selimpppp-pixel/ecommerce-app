@@ -341,6 +341,7 @@ useEffect(() => {
   <hr />
 
   {/* 🚪 LOGOUT */}
+{user ? (
   <button
     onClick={() => {
       handleLogout();
@@ -359,6 +360,26 @@ useEffect(() => {
   >
     Logout
   </button>
+) : (
+  <button
+    onClick={() => {
+      navigate("/login");
+      setShowMenu(false);
+    }}
+    style={{
+      background: "#ff9900",
+      color: "#000",
+      border: "none",
+      padding: "12px",
+      borderRadius: "8px",
+      marginTop: "10px",
+      fontWeight: "bold",
+      cursor: "pointer",
+    }}
+  >
+    Login
+  </button>
+)}
 </div>
             )}
           </div>

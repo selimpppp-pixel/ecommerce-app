@@ -23,7 +23,7 @@ function App() {
     <BrowserRouter>
       {/* 🔵 Navbar */}
       <Navbar />
-<main>
+<main style={{ flex: 1}}>
       <Routes>
         {/* 🏠 Home  */}
        <Route
