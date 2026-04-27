@@ -65,8 +65,7 @@ function Cart() {
           {/* ✅ Checkout */}
           <button
             onClick={() => {
-              dispatch(clearCart());   // 🧹 يفضي الكارت
-              navigate("/success");    // 🔁 يروح للصفحة
+              navigate("/payment");    // 🔁 يروح للصفحة
             }}
             style={{
               marginTop: "20px",

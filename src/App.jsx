@@ -11,7 +11,7 @@ import Success from "./pages/Success.jsx";
 import Favorites from "./pages/Favorites.jsx";
 import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx"; // ⚠️ خليها C كابيتال
-
+import Payment from "./pages/Payment.jsx";
 // 🧩 Components
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
@@ -85,6 +85,7 @@ function App() {
 
         {/* ✅ Success */}
         <Route path="/success" element={<Success />} />
+        <Route path="/payment" element={<Payment />} />
       </Routes>
       </main>
 
