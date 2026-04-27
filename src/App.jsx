@@ -12,7 +12,7 @@ import Favorites from "./pages/Favorites.jsx";
 import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx"; // ⚠️ خليها C كابيتال
 import Payment from "./pages/Payment.jsx";
-// 🧩 Components
+//  Components
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
