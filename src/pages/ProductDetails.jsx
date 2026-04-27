@@ -1,40 +1,33 @@
-import { useParams } from "react-router-dom"; 
-// ده hook بيجيب الـ id من الرابط
-
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import API from "../services/api";
 
-// Redux
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
+
 import Swal from "sweetalert2";
+import { FaArrowLeft } from "react-icons/fa";
 
 function ProductDetails() {
-
-  // بنجيب id من اللينك
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  // dispatch عشان نضيف للكارت
   const dispatch = useDispatch();
 
-  // state نخزن فيه بيانات المنتج
   const [product, setProduct] = useState(null);
-
-  // state عشان نعمل responsive
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // متابعة حجم الشاشة
+  // 📱 responsive
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
 
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // جلب المنتج من API
+  // 📦 fetch product
   useEffect(() => {
     const getProduct = async () => {
       try {
@@ -48,87 +41,123 @@ function ProductDetails() {
     getProduct();
   }, [id]);
 
-  // لو لسه البيانات محملتش
-  if (!product) return <p style={{ marginTop: "70px" }}>Loading...</p>;
+  if (!product) return <p style={{ marginTop: "80px" }}>Loading...</p>;
 
   return (
     <div
       style={{
-        marginTop: "70px",
+        marginTop: "80px",
         padding: "20px",
-
-        // هنا بنعمل layout
-        display: "flex",
-
-        // لو موبايل نخليهم تحت بعض
-        flexDirection: isMobile ? "column" : "row",
-
-        gap: "30px",
-        alignItems: "center",
+        maxWidth: "1100px",   // 👈 أهم تحسين
+        marginLeft: "auto",
+        marginRight: "auto",
       }}
     >
-
-      {/* صورة المنتج */}
-      <img
-        src={product.image}
-        style={{
-          width: isMobile ? "100%" : "300px",
-          maxWidth: "400px",
-          borderRadius: "10px",
-        }}
-      />
-
-      {/* تفاصيل المنتج */}
+      {/* 🔙 BACK */}
       <div
+        onClick={() => navigate(-1)}
         style={{
-          maxWidth: "500px",
+          cursor: "pointer",
+          marginBottom: "20px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          fontWeight: "bold",
+          color: "#ff9900",
         }}
       >
-        {/* اسم المنتج */}
-        <h2>{product.title}</h2>
+        <FaArrowLeft /> Back
+      </div>
 
-        {/* الوصف */}
-        <p style={{ lineHeight: "1.6" }}>
-          {product.description}
-        </p>
-
-        {/* السعر */}
-        <h3 style={{ color: "green" }}>
-          {product.price} $
-        </h3>
-
-        {/* زرار إضافة للكارت */}
-        <button
-          onClick={() => {
-  dispatch(
-    addToCart({
-      ...product,
-      id: product.id || product._id,
-    })
-  );
-
-  //  Sweet Alert
-  Swal.fire({
-    title: "Added to cart 🛒",
-    text: `${product.title}`,
-    icon: "success",
-    confirmButtonText: "OK",
-    timer: 1500,
-    showConfirmButton: false,
-  });
-}}
+      {/* MAIN */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          gap: "40px",
+          alignItems: "center",
+        }}
+      >
+        {/* 🖼 IMAGE */}
+        <div
           style={{
-            marginTop: "20px",
-            padding: "10px 20px",
-            background: "#ff9900",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "bold",
+            flex: 1,
+            background: "#fff",
+            padding: "20px",
+            borderRadius: "12px",
           }}
         >
-          Add to Cart
-        </button>
+          <img
+            src={product.image}
+            style={{
+              width: "100%",
+              maxHeight: "350px",
+              objectFit: "contain",
+            }}
+          />
+        </div>
+
+        {/* 📄 DETAILS */}
+        <div style={{ flex: 1 }}>
+          <h2 style={{ marginBottom: "10px" }}>
+            {product.title}
+          </h2>
+
+          <p
+            style={{
+              lineHeight: "1.6",
+              opacity: 0.7,
+              marginBottom: "15px",
+            }}
+          >
+            {product.description}
+          </p>
+
+          <h3
+            style={{
+              color: "#ff9900",
+              fontSize: "22px",
+              marginBottom: "20px",
+            }}
+          >
+            ${product.price}
+          </h3>
+
+          {/* 🛒 BUTTON */}
+          <button
+            onClick={() => {
+              dispatch(
+                addToCart({
+                  ...product,
+                  id: product.id || product._id,
+                })
+              );
+
+              Swal.fire({
+                title: "Added to cart 🛒",
+                text: product.title,
+                icon: "success",
+                timer: 1200,
+                showConfirmButton: false,
+              });
+            }}
+            style={{
+              width: "100%",
+              padding: "14px",
+              background: "linear-gradient(45deg,#ffb347,#ff9900)",
+              border: "none",
+              borderRadius: "10px",
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: "16px",
+              transition: "0.2s",
+            }}
+            onMouseEnter={(e) => (e.target.style.opacity = "0.85")}
+            onMouseLeave={(e) => (e.target.style.opacity = "1")}
+          >
+            Add to Cart
+          </button>
+        </div>
       </div>
     </div>
   );
