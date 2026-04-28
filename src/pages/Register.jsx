@@ -1,9 +1,15 @@
 import { useState } from "react";
 import { auth } from "../firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext"; // 👈 مهم
 
 function Register() {
+  const { darkMode } = useTheme(); // 👈 مهم
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,9 +18,8 @@ function Register() {
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    // ❗ تحقق من البيانات
     if (!name || !email || !password || !confirmPassword) {
-      alert("Please fill all fields ❗");
+      alert("Fill all fields ❗");
       return;
     }
 
@@ -30,12 +35,10 @@ function Register() {
         password
       );
 
-      // 🔥 نحفظ الاسم
       await updateProfile(userCredential.user, {
         displayName: name,
       });
 
-      // 🔥 نسجله login
       localStorage.setItem("token", userCredential.user.uid);
 
       alert("Account created successfully ✅");
@@ -54,6 +57,9 @@ function Register() {
         justifyContent: "center",
         alignItems: "center",
         padding: "20px",
+        background: darkMode
+          ? "linear-gradient(to right, #1a1a1a, #2a2a2a)"
+          : "linear-gradient(to right, #e6e9f0, #eef1f5)",
       }}
     >
       <div
@@ -61,72 +67,60 @@ function Register() {
           width: "100%",
           maxWidth: "400px",
           padding: "25px",
-          borderRadius: "12px",
-          background: "#fff",
-          boxShadow: "0 5px 20px rgba(0,0,0,0.1)",
+          borderRadius: "16px",
+          background: darkMode ? "#1f1f1f" : "#fff",
+          color: darkMode ? "#fff" : "#000",
+          boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
         }}
       >
-        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+        {/* 🔥 العنوان (متظبط 100%) */}
+        <h2
+          style={{
+            textAlign: "center",
+            marginBottom: "20px",
+            fontWeight: "bold",
+            color: darkMode ? "#ff9900" : "#000",
+            opacity: 1,
+            zIndex: 10,
+            position: "relative",
+          }}
+        >
           Create Account
         </h2>
 
-        {/* 👤 User Name */}
+        {/* 👤 NAME */}
         <input
           type="text"
           placeholder="Enter your name"
           onChange={(e) => setName(e.target.value)}
-          style={{
-            width: "100%",
-            marginBottom: "12px",
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-          }}
+          style={inputStyle(darkMode)}
         />
 
-        {/* 📧 Email */}
+        {/* 📧 EMAIL */}
         <input
           type="email"
           placeholder="Enter your email"
           onChange={(e) => setEmail(e.target.value)}
-          style={{
-            width: "100%",
-            marginBottom: "12px",
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-          }}
+          style={inputStyle(darkMode)}
         />
 
-        {/* 🔑 Password */}
+        {/* 🔑 PASSWORD */}
         <input
           type="password"
           placeholder="Enter your password"
           onChange={(e) => setPassword(e.target.value)}
-          style={{
-            width: "100%",
-            marginBottom: "12px",
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-          }}
+          style={inputStyle(darkMode)}
         />
 
-        {/* 🔁 Confirm Password */}
+        {/* 🔁 CONFIRM */}
         <input
           type="password"
           placeholder="Confirm your password"
           onChange={(e) => setConfirmPassword(e.target.value)}
-          style={{
-            width: "100%",
-            marginBottom: "20px",
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-          }}
+          style={inputStyle(darkMode)}
         />
 
-        {/* 🔘 Button */}
+        {/* BUTTON */}
         <button
           onClick={handleRegister}
           style={{
@@ -135,9 +129,11 @@ function Register() {
             background: "#ff9900",
             border: "none",
             color: "#000",
-            borderRadius: "8px",
+            borderRadius: "10px",
             cursor: "pointer",
             fontWeight: "bold",
+            fontSize: "16px",
+            marginTop: "10px",
           }}
         >
           Register
@@ -146,5 +142,18 @@ function Register() {
     </div>
   );
 }
+
+// 🔥 input style
+const inputStyle = (darkMode) => ({
+  width: "100%",
+  marginBottom: "12px",
+  padding: "12px",
+  borderRadius: "10px",
+  border: "1px solid #ddd",
+  outline: "none",
+  fontSize: "14px",
+  background: darkMode ? "#333" : "#fff",
+  color: darkMode ? "#fff" : "#000",
+});
 
 export default Register;
