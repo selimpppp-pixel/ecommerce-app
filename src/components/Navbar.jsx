@@ -281,7 +281,32 @@ useEffect(() => {
   <h3 style={{ marginBottom: "10px" }}>
     👋 Welcome {user?.displayName || user?.email?.split("@")[0]}
   </h3>
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    background: darkMode ? "#333" : "#f1f1f1",
+    borderRadius: "20px",
+    padding: "8px 12px",
+    marginBottom: "15px",
+  }}
+>
+  <FaSearch />
 
+  <input
+    type="text"
+    placeholder="Search..."
+    onChange={(e) => dispatch(setSearch(e.target.value))}
+    style={{
+      border: "none",
+      outline: "none",
+      marginLeft: "8px",
+      background: "transparent",
+      width: "100%",
+      color: darkMode ? "#fff" : "#000",
+    }}
+  />
+</div>
   <hr />
 
   {/* 🔗 LINKS */}
